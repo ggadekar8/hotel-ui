@@ -1,0 +1,176 @@
+.waiter-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e1e8e4;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 48 37 / 4%);
+}
+
+.waiter-card__image,
+.waiter-card__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+}
+
+.waiter-card__image {
+  object-fit: cover;
+}
+
+.waiter-card__avatar {
+  display: grid;
+  place-items: center;
+  background: #dcebe3;
+  color: #176548;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.waiter-card__details {
+  min-width: 0;
+}
+
+.waiter-card__identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.waiter-card__identity h3 {
+  margin: 0;
+  color: #202c29;
+  font-size: 16px;
+}
+
+.waiter-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #e8f4ee;
+  color: #176548;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.waiter-card__status::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.waiter-card__status--on-duty {
+  background: #fff2df;
+  color: #995c14;
+}
+
+.waiter-card__code {
+  margin: 5px 0 10px;
+  color: #64736d;
+  font-size: 13px;
+}
+
+.waiter-card__tables {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  color: #46554f;
+  font-size: 12px;
+}
+
+.waiter-card__tables-label {
+  padding-top: 4px;
+  color: #64736d;
+  font-weight: 600;
+}
+
+.waiter-card__table-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.waiter-card__table-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 8px;
+  border: 1px solid #e1e8e4;
+  border-radius: 5px;
+  background: #f7faf8;
+}
+
+.waiter-card__chair-count,
+.waiter-card__empty {
+  color: #718079;
+}
+
+.waiter-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.waiter-card__actions button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid #cbd8d1;
+  border-radius: 5px;
+  background: #fff;
+  color: #35443e;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.waiter-card__actions button:first-child {
+  border-color: #176548;
+  background: #176548;
+  color: #fff;
+}
+
+.waiter-card__actions button:hover {
+  background: #f0f5f2;
+}
+
+.waiter-card__actions button:first-child:hover {
+  background: #11543b;
+}
+
+.waiter-card__actions button:focus-visible {
+  outline: 3px solid #a7d4bf;
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .waiter-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .waiter-card__image,
+  .waiter-card__avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .waiter-card__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}

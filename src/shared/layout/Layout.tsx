@@ -69,11 +69,19 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
               })}
             >
               Cart
-            </NavLink>
+            </NavLink>{" "}
             <div className="dropdown">
-              <button className="dropbtn">External Reports ▼</button>
+              <button className="dropbtn">Admin ▼</button>
               <div className="dropdown-content">
-                <a href="#">Report1</a>
+                <NavLink
+                  to="/my-account"
+                  style={({ isActive }) => ({
+                    ...styles.navLink,
+                    fontWeight: isActive ? 700 : 400,
+                  })}
+                >
+                  My Account
+                </NavLink>
                 <a href="#">Report2</a>
                 <a href="#">Report3</a>
               </div>

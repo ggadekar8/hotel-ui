@@ -8,6 +8,7 @@ import Login from "../../pages/login/Login";
 import Cart from "../../features/cart/Cart";
 import ActiveTables from "../../features/order/active-tables/ActiveTables";
 import ViewOrder from "../../features/order/view-order/ViewOrder";
+import MyAccount from "../../features/admin-panel/my-account/MyAccount";
 export const AppRoutes = () => {
   return (
     <>
@@ -31,6 +32,7 @@ export const AppRoutes = () => {
               />
             }
           />
+          <Route path="/my-account" element={<MyAccount />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
