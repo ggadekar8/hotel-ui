@@ -36,3 +36,9 @@ export interface SubMenu {
    status: string;
  }
  
+ export interface ITable  {
+   id: number | string;
+   numberOfChairs: number;
+   status: string;
+ }
+ 

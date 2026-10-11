@@ -1,19 +1,25 @@
-import { useState } from "react";
-import Table, { type TableProps } from "../Table";
+import { useEffect, useState } from "react";
+import Table, { type TableProps, type TableStatus } from "../Table";
 import AddTable from "../add-table/AddTable";
 import UpdateTable from "../update-table/UpdateTable";
-
-const initialTables: TableProps[] = [
-  { id: 1, numberOfChairs: 2, status: "Available" },
-  { id: 2, numberOfChairs: 4, status: "Occupied" },
-  { id: 3, numberOfChairs: 6, status: "Reserved" },
-  { id: 4, numberOfChairs: 4, status: "Available" },
-];
+import { useAppDispatch } from "../../../../shared/hooks/useAppDispatch";
+import { useAppSelector } from "../../../../shared/hooks/useAppSelector";
+import { addTable, fetchTables } from "../../../../store/table/tableThunks";
+import { removeTable, updateTable } from "../../../../store/table/tableSlice";
 
 export default function TableManagement() {
-  const [tables, setTables] = useState(initialTables);
+  const dispatch = useAppDispatch();
+  const {
+    data: tables,
+    loading,
+    error,
+  } = useAppSelector((state) => state.tables);
   const [editingTable, setEditingTable] = useState<TableProps | null>(null);
   const [isAddingTable, setIsAddingTable] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchTables());
+  }, [dispatch]);
 
   return (
     <section
@@ -35,7 +41,13 @@ export default function TableManagement() {
         </button>
       </header>
 
-      {tables.length ? (
+      {loading ? (
+        <p className="table-management__empty">Loading tables...</p>
+      ) : error ? (
+        <p className="table-management__empty" role="alert">
+          {error}
+        </p>
+      ) : tables.length ? (
         <div className="table-management__scroll">
           <table className="table-management__grid">
             <thead>
@@ -51,12 +63,9 @@ export default function TableManagement() {
                 <Table
                   key={table.id}
                   {...table}
+                  status={table.status as TableStatus}
                   onEdit={setEditingTable}
-                  onDelete={(selected) =>
-                    setTables((current) =>
-                      current.filter((item) => item.id !== selected.id),
-                    )
-                  }
+                  onDelete={(selected) => dispatch(removeTable(selected.id))}
                 />
               ))}
             </tbody>
@@ -87,11 +96,7 @@ export default function TableManagement() {
                 table={editingTable}
                 onClose={() => setEditingTable(null)}
                 onSave={(updated) => {
-                  setTables((current) =>
-                    current.map((item) =>
-                      item.id === updated.id ? updated : item,
-                    ),
-                  );
+                  dispatch(updateTable(updated));
                   setEditingTable(null);
                 }}
               />
@@ -99,7 +104,7 @@ export default function TableManagement() {
               <AddTable
                 onClose={() => setIsAddingTable(false)}
                 onSave={(table) => {
-                  setTables((current) => [...current, table]);
+                  dispatch(addTable(table));
                   setIsAddingTable(false);
                 }}
               />
