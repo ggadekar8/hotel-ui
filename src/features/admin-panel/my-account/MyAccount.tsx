@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TableProps } from "../table/Table";
+import type { IWaiter } from "../../../common/model/users/types";
+import { useAppDispatch } from "../../../shared/hooks/useAppDispatch";
+import { useAppSelector } from "../../../shared/hooks/useAppSelector";
+import { fetchWaiters } from "../../../store/waiter/waiterThunks";
+import {
+  addWaiter as addWaiterToState,
+  removeWaiter,
+  updateWaiter as updateWaiterInState,
+} from "../../../store/waiter/waiterSlice";
 import Counter from "../counter/Counter";
 import Menu from "../menu/Menu";
 import TableManagement from "../table/table-management/TableManagement";
-import Waiter, { type WaiterData } from "../waiter/Waiter";
+import Waiter from "../waiter/Waiter";
 import AddWaiter from "../waiter/add-waiter/AddWaiter";
 import UpdateWaiter from "../waiter/update-waiter/UpdateWaiter";
 
@@ -16,44 +25,16 @@ const dummyTables: TableProps[] = [
   { id: 3, numberOfChairs: 6, status: "Reserved" },
   { id: 4, numberOfChairs: 4, status: "Available" },
 ];
-interface AccountWaiter extends WaiterData {
-  id: number | string;
-}
-
-const dummyWaiters: AccountWaiter[] = [
-  {
-    id: 1,
-    code: "W001",
-    name: "Alex Morgan",
-    status: "Available",
-    assignedTables: dummyTables,
-    image: "",
-  },
-  {
-    id: 2,
-    code: "W002",
-    name: "Jamie Lee",
-    status: "On duty",
-    assignedTables: dummyTables,
-    image: "",
-  },
-  {
-    id: 3,
-    code: "W003",
-    name: "Sam Taylor",
-    status: "Available",
-    assignedTables: [],
-    image: "",
-  },
-];
-
 export default function MyAccount() {
+  const dispatch = useAppDispatch();
+  const { waiters, isLoading, error } = useAppSelector((state) => state.waiter);
   const [activeTab, setActiveTab] = useState<Tab>("Waiter");
-  const [waiters, setWaiters] = useState<AccountWaiter[]>(dummyWaiters);
-  const [editingWaiter, setEditingWaiter] = useState<AccountWaiter | null>(
-    null,
-  );
+  const [editingWaiter, setEditingWaiter] = useState<IWaiter | null>(null);
   const [isAddingWaiter, setIsAddingWaiter] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchWaiters());
+  }, [dispatch]);
 
   return (
     <div style={{ display: "flex", gap: 24, minHeight: 320 }}>
@@ -116,6 +97,8 @@ export default function MyAccount() {
               Add waiter
             </button>
             <h2 id="waiter-heading">Waiter list</h2>
+            {isLoading && <p role="status">Loading waiters...</p>}
+            {error && <p role="alert">{error}</p>}
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {waiters.map((waiter) => (
                 <li
@@ -123,13 +106,15 @@ export default function MyAccount() {
                   style={{ padding: "12px 0", borderBottom: "1px solid #eee" }}
                 >
                   <Waiter
-                    waiter={waiter}
-                    onEdit={(selected) => {
-                      const accountWaiter = waiters.find(
-                        (candidate) => candidate.code === selected.code,
-                      );
-                      if (accountWaiter) setEditingWaiter(accountWaiter);
+                    waiter={{
+                      ...waiter,
+                      assignedTables: waiter.assignedTables.map((table) => ({
+                        ...table,
+                        status: table.status as TableProps["status"],
+                      })),
                     }}
+                    onEdit={() => setEditingWaiter(waiter)}
+                    onDelete={() => dispatch(removeWaiter(String(waiter.id)))}
                   />
                 </li>
               ))}
@@ -162,11 +147,10 @@ export default function MyAccount() {
             <AddWaiter
               onClose={() => setIsAddingWaiter(false)}
               onAdd={(addedWaiter) => {
-                setWaiters((currentWaiters) => [
-                  ...currentWaiters,
-                  {
+                dispatch(
+                  addWaiterToState({
                     id: addedWaiter.id,
-                    code: `W${String(currentWaiters.length + 1).padStart(3, "0")}`,
+                    code: `W${String(waiters.length + 1).padStart(3, "0")}`,
                     name: addedWaiter.name,
                     status: "Available",
                     image: "",
@@ -180,8 +164,8 @@ export default function MyAccount() {
                           status: "Available",
                         },
                     ),
-                  },
-                ]);
+                  }),
+                );
               }}
             />
           </div>
@@ -209,25 +193,21 @@ export default function MyAccount() {
               }}
               onClose={() => setEditingWaiter(null)}
               onUpdate={(updated) => {
-                setWaiters((currentWaiters) =>
-                  currentWaiters.map((waiter) =>
-                    waiter.id === editingWaiter.id
-                      ? {
-                          ...waiter,
-                          code: String(updated.number ?? waiter.code),
-                          assignedTables: (updated.tables ?? []).map(
-                            (tableId) =>
-                              dummyTables.find(
-                                (table) => String(table.id) === String(tableId),
-                              ) ?? {
-                                id: tableId,
-                                numberOfChairs: 0,
-                                status: "Available",
-                              },
-                          ),
-                        }
-                      : waiter,
-                  ),
+                dispatch(
+                  updateWaiterInState({
+                    ...editingWaiter,
+                    code: String(updated.number ?? editingWaiter.code),
+                    assignedTables: (updated.tables ?? []).map(
+                      (tableId) =>
+                        dummyTables.find(
+                          (table) => String(table.id) === String(tableId),
+                        ) ?? {
+                          id: tableId,
+                          numberOfChairs: 0,
+                          status: "Available",
+                        },
+                    ),
+                  }),
                 );
                 setEditingWaiter(null);
               }}

@@ -1,0 +1,48 @@
+[ {
+    "id": 11,
+    "code": "W0011",
+    "name": "Ganesh Gadekar",
+    "status": "Available",
+    "assignedTables": [
+      { "id": 1, "numberOfChairs": 2, "status": "Available" },
+      { "id": 2, "numberOfChairs": 4, "status": "Occupied" },
+      { "id": 3, "numberOfChairs": 6, "status": "Reserved" },
+      { "id": 4, "numberOfChairs": 4, "status": "Available" }
+    ],
+    "image": ""
+  },
+  {
+    "id": 1,
+    "code": "W001",
+    "name": "Alex Morgan",
+    "status": "Available",
+    "assignedTables": [
+      { "id": 1, "numberOfChairs": 2, "status": "Available" },
+      { "id": 2, "numberOfChairs": 4, "status": "Occupied" },
+      { "id": 3, "numberOfChairs": 6, "status": "Reserved" },
+      { "id": 4, "numberOfChairs": 4, "status": "Available" }
+    ],
+    "image": ""
+  },
+  {
+    "id": 2,
+    "code": "W002",
+    "name": "Jamie Lee",
+    "status": "On duty",
+    "assignedTables": [
+      { "id": 1, "numberOfChairs": 2, "status": "Available" },
+      { "id": 2, "numberOfChairs": 4, "status": "Occupied" },
+      { "id": 3, "numberOfChairs": 6, "status": "Reserved" },
+      { "id": 4, "numberOfChairs": 4, "status": "Available" }
+    ],
+    "image": ""
+  },
+  {
+    "id": 3,
+    "code": "W003",
+    "name": "Sam Taylor",
+    "status": "Available",
+    "assignedTables": [],
+    "image": ""
+  }
+]
