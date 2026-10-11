@@ -1,4 +1,11 @@
 import { useMemo, useState } from "react";
+import { useEffect } from "react";
+
+import { fetchMenus, fetchUsers } from "../../store/users/userThunks";
+import { useAppDispatch } from "../../shared/hooks/useAppDispatch";
+
+import { useAppSelector } from "../../shared/hooks/useAppSelector";
+import type { SubMenu } from "../../common/model/users/types";
 
 type MenuItem = {
   id: number;
@@ -7,109 +14,6 @@ type MenuItem = {
   price: number;
 };
 type CartItem = MenuItem & { quantity: number };
-
-const menu: Record<string, MenuItem[]> = {
-  Veg: [
-    {
-      id: 1,
-      name: "Paneer Butter Masala",
-      description: "Creamy tomato curry with paneer",
-      price: 240,
-    },
-    {
-      id: 2,
-      name: "Veg Biryani",
-      description: "Fragrant rice with seasonal vegetables",
-      price: 190,
-    },
-    {
-      id: 3,
-      name: "Dal Tadka",
-      description: "Yellow lentils tempered with spices",
-      price: 160,
-    },
-  ],
-  "Non-Veg": [
-    {
-      id: 4,
-      name: "Butter Chicken",
-      description: "Chicken in a rich tomato gravy",
-      price: 290,
-    },
-    {
-      id: 5,
-      name: "Chicken Biryani",
-      description: "Aromatic basmati rice and chicken",
-      price: 260,
-    },
-    {
-      id: 6,
-      name: "Fish Curry",
-      description: "Coastal-style curry with fresh fish",
-      price: 280,
-    },
-  ],
-  Starters: [
-    {
-      id: 7,
-      name: "Veg Spring Rolls",
-      description: "Crispy rolls with vegetable filling",
-      price: 150,
-    },
-    {
-      id: 8,
-      name: "Chicken Tikka",
-      description: "Char-grilled chicken with spices",
-      price: 220,
-    },
-    {
-      id: 9,
-      name: "Paneer Tikka",
-      description: "Grilled paneer with peppers",
-      price: 190,
-    },
-  ],
-  Beverages: [
-    {
-      id: 10,
-      name: "Fresh Lime Soda",
-      description: "Refreshing lime, sweet or salted",
-      price: 70,
-    },
-    {
-      id: 11,
-      name: "Mango Lassi",
-      description: "Chilled yogurt and mango drink",
-      price: 100,
-    },
-    {
-      id: 12,
-      name: "Masala Chai",
-      description: "Indian tea brewed with spices",
-      price: 40,
-    },
-  ],
-  Snacks: [
-    {
-      id: 13,
-      name: "French Fries",
-      description: "Golden, crispy potato fries",
-      price: 110,
-    },
-    {
-      id: 14,
-      name: "Samosa",
-      description: "Crispy pastry with spiced potatoes",
-      price: 50,
-    },
-    {
-      id: 15,
-      name: "Club Sandwich",
-      description: "Toasted sandwich with fresh fillings",
-      price: 180,
-    },
-  ],
-};
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
@@ -152,7 +56,11 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 600,
     cursor: "pointer",
   },
-  activeTab: { background: "#315d3e", borderColor: "#315d3e", color: "#fff" },
+  activeTab: {
+    background: "#315d3e",
+    border: "1px solid #315d3e",
+    color: "#fff",
+  },
   sectionHeading: {
     display: "flex",
     justifyContent: "space-between",
@@ -251,6 +159,36 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "18px 0",
     fontSize: 16,
   },
+  usersSection: { marginTop: 42 },
+  usersHeader: {
+    display: "flex",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    gap: 12,
+    marginBottom: 14,
+  },
+  usersList: { margin: 0, padding: 0, listStyle: "none" },
+  userRow: {
+    display: "grid",
+    gridTemplateColumns: "40px minmax(0, 1fr) auto",
+    alignItems: "center",
+    gap: 12,
+    padding: "12px 0",
+    borderBottom: "1px solid #e9ece6",
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    display: "grid",
+    placeItems: "center",
+    borderRadius: "50%",
+    background: "#e8efe6",
+    color: "#315d3e",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  userName: { margin: 0, fontSize: 14, fontWeight: 700 },
+  userEmail: { color: "#788078", fontSize: 13 },
   checkout: {
     width: "100%",
     border: 0,
@@ -265,8 +203,7 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 export default function Home() {
-  const categories = Object.keys(menu);
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
+  const [activeCategory, setActiveCategory] = useState<number | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const total = useMemo(
@@ -274,7 +211,35 @@ export default function Home() {
     [cart],
   );
 
-  const addToCart = (item: MenuItem) => {
+  const dispatch = useAppDispatch();
+
+  const {
+    data: users,
+    loading: usersLoading,
+    error: userError,
+    menus,
+    menusLoading,
+    menuError,
+  } = useAppSelector((state) => state.users);
+  const categories = menus;
+  const selectedMenu =
+    menus.find((category) => category.id === activeCategory) ?? menus[0];
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+    dispatch(fetchMenus());
+  }, [dispatch]);
+
+  if (menusLoading && menus.length === 0) return <p>Loading menu...</p>;
+  if (menuError && menus.length === 0) return <p role="alert">{menuError}</p>;
+
+  const addToCart = (submenu: SubMenu) => {
+    const item: MenuItem = {
+      id: submenu.id,
+      name: submenu.submenu,
+      description: submenu.description,
+      price: submenu.price,
+    };
     setCart((current) => {
       const existing = current.find((cartItem) => cartItem.id === item.id);
       return existing
@@ -314,36 +279,36 @@ export default function Home() {
           <nav style={styles.tabs} aria-label="Menu categories">
             {categories.map((category) => (
               <button
-                key={category}
+                key={category.id}
                 type="button"
-                aria-pressed={activeCategory === category}
-                onClick={() => setActiveCategory(category)}
+                aria-pressed={selectedMenu?.id === category.id}
+                onClick={() => setActiveCategory(category.id)}
                 style={{
                   ...styles.tab,
-                  ...(activeCategory === category ? styles.activeTab : {}),
+                  ...(selectedMenu?.id === category.id ? styles.activeTab : {}),
                 }}
               >
-                {category}
+                {category.menu}
               </button>
             ))}
           </nav>
           <div style={styles.sectionHeading}>
             <div>
               <p style={styles.eyebrow}>EXPLORE OUR MENU</p>
-              <h2 style={styles.heading}>{activeCategory}</h2>
+              <h2 style={styles.heading}>{selectedMenu?.menu ?? "Menu"}</h2>
             </div>
             <span style={styles.count}>
-              {menu[activeCategory].length} dishes
+              {selectedMenu?.submenu.length ?? 0} dishes
             </span>
           </div>
           <div style={styles.items}>
-            {menu[activeCategory].map((item) => (
+            {selectedMenu?.submenu.map((item) => (
               <article key={item.id} style={styles.itemCard}>
                 <div style={styles.foodIcon} aria-hidden="true">
                   🍽️
                 </div>
                 <div style={styles.itemInfo}>
-                  <h3 style={styles.itemName}>{item.name}</h3>
+                  <h3 style={styles.itemName}>{item.submenu}</h3>
                   <p style={styles.description}>{item.description}</p>
                   <strong style={styles.price}>₹{item.price}</strong>
                 </div>
@@ -356,6 +321,10 @@ export default function Home() {
                 </button>
               </article>
             ))}
+            {selectedMenu && selectedMenu.submenu.length === 0 && (
+              <p>No dishes in this menu yet.</p>
+            )}
+            {!selectedMenu && !menusLoading && <p>No menus available.</p>}
           </div>
         </section>
         <aside style={styles.cartPanel} aria-label="Your cart">
@@ -418,6 +387,32 @@ export default function Home() {
           )}
         </aside>
       </div>
+      <section style={styles.usersSection} aria-labelledby="users-heading">
+        <header style={styles.usersHeader}>
+          <h2 id="users-heading" style={styles.cartTitle}>
+            Users
+          </h2>
+          <span style={styles.count}>{users.length} users</span>
+        </header>
+        {usersLoading && users.length === 0 && <p>Loading users...</p>}
+        {userError && users.length === 0 && <p role="alert">{userError}</p>}
+        <ul style={styles.usersList}>
+          {users.map((user) => (
+            <li key={user.id} style={styles.userRow}>
+              <span style={styles.userAvatar} aria-hidden="true">
+                {user.name
+                  .split(" ")
+                  .map((part) => part[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase()}
+              </span>
+              <strong style={styles.userName}>{user.name}</strong>
+              <span style={styles.userEmail}>{user.email}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }

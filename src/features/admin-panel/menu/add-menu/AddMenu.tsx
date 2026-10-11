@@ -4,20 +4,21 @@ import {
   type FormEvent,
   type CSSProperties,
 } from "react";
+import type { Menu } from "../../../../common/model/users/types";
 
 type MenuItem = { id: number; name: string; price: string; image: string };
 
 interface AddMenuProps {
   onClose: () => void;
+  onCreate: (menu: Menu) => void;
 }
 
-export default function AddMenu({ onClose }: AddMenuProps) {
+export default function AddMenu({ onClose, onCreate }: AddMenuProps) {
   const [menuName, setMenuName] = useState("");
   const [items, setItems] = useState<MenuItem[]>([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState("");
-  const [notice, setNotice] = useState("");
 
   const chooseImage = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -37,9 +38,16 @@ export default function AddMenu({ onClose }: AddMenuProps) {
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setNotice(
-      `Menu “${menuName.trim()}” created with ${items.length} ${items.length === 1 ? "item" : "items"}.`,
-    );
+    onCreate({
+      id: Date.now(),
+      menu: menuName.trim(),
+      submenu: items.map((item) => ({
+        id: item.id,
+        submenu: item.name,
+        description: "",
+        price: Number(item.price),
+      })),
+    });
   };
 
   return (
@@ -174,11 +182,6 @@ export default function AddMenu({ onClose }: AddMenuProps) {
         </section>
 
         <footer style={styles.footer}>
-          {notice && (
-            <p role="status" style={styles.notice}>
-              {notice}
-            </p>
-          )}
           <button type="submit" style={styles.submit}>
             Create menu
           </button>
@@ -336,7 +339,6 @@ const styles: Record<string, CSSProperties> = {
     gap: 16,
     padding: "18px 30px",
   },
-  notice: { flex: 1, margin: 0, color: "#4355cb", fontSize: 13 },
   submit: {
     padding: "11px 18px",
     border: 0,

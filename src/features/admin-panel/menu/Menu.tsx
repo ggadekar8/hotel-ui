@@ -1,142 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { Menu as MenuRecord } from "../../../common/model/users/types";
+import { useAppDispatch } from "../../../shared/hooks/useAppDispatch";
+import { useAppSelector } from "../../../shared/hooks/useAppSelector";
+import { addMenu, fetchMenus } from "../../../store/users/userThunks";
+import { renameMenu } from "../../../store/users/userSlice";
 import AddMenu from "./add-menu/AddMenu";
 import "./Menu.css";
 
-type MenuItem = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-};
-
-type MenuData = Record<string, MenuItem[]>;
-
-const initialMenu: MenuData = {
-  Veg: [
-    {
-      id: 1,
-      name: "Paneer Butter Masala",
-      description: "Creamy tomato curry with paneer",
-      price: 240,
-    },
-    {
-      id: 2,
-      name: "Veg Biryani",
-      description: "Fragrant rice with seasonal vegetables",
-      price: 190,
-    },
-    {
-      id: 3,
-      name: "Dal Tadka",
-      description: "Yellow lentils tempered with spices",
-      price: 160,
-    },
-  ],
-  "Non-Veg": [
-    {
-      id: 4,
-      name: "Butter Chicken",
-      description: "Chicken in a rich tomato gravy",
-      price: 290,
-    },
-    {
-      id: 5,
-      name: "Chicken Biryani",
-      description: "Aromatic basmati rice and chicken",
-      price: 260,
-    },
-    {
-      id: 6,
-      name: "Fish Curry",
-      description: "Coastal-style curry with fresh fish",
-      price: 280,
-    },
-  ],
-  Starters: [
-    {
-      id: 7,
-      name: "Veg Spring Rolls",
-      description: "Crispy rolls with vegetable filling",
-      price: 150,
-    },
-    {
-      id: 8,
-      name: "Chicken Tikka",
-      description: "Char-grilled chicken with spices",
-      price: 220,
-    },
-    {
-      id: 9,
-      name: "Paneer Tikka",
-      description: "Grilled paneer with peppers",
-      price: 190,
-    },
-  ],
-  Beverages: [
-    {
-      id: 10,
-      name: "Fresh Lime Soda",
-      description: "Refreshing lime, sweet or salted",
-      price: 70,
-    },
-    {
-      id: 11,
-      name: "Mango Lassi",
-      description: "Chilled yogurt and mango drink",
-      price: 100,
-    },
-    {
-      id: 12,
-      name: "Masala Chai",
-      description: "Indian tea brewed with spices",
-      price: 40,
-    },
-  ],
-  Snacks: [
-    {
-      id: 13,
-      name: "French Fries",
-      description: "Golden, crispy potato fries",
-      price: 110,
-    },
-    {
-      id: 14,
-      name: "Samosa",
-      description: "Crispy pastry with spiced potatoes",
-      price: 50,
-    },
-    {
-      id: 15,
-      name: "Club Sandwich",
-      description: "Toasted sandwich with fresh fillings",
-      price: 180,
-    },
-  ],
-};
-
 export default function Menu() {
-  const [menu, setMenu] = useState<MenuData>(initialMenu);
-  const [editing, setEditing] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { menus, menusLoading, menuError } = useAppSelector(
+    (state) => state.users,
+  );
+  const [editing, setEditing] = useState<number | null>(null);
   const [draft, setDraft] = useState("");
   const [isAddingMenu, setIsAddingMenu] = useState(false);
 
-  const startEdit = (name: string) => {
-    setEditing(name);
-    setDraft(name);
+  useEffect(() => {
+    dispatch(fetchMenus());
+  }, [dispatch]);
+
+  const startEdit = (menu: MenuRecord) => {
+    setEditing(menu.id);
+    setDraft(menu.menu);
   };
 
-  const saveEdit = (oldName: string) => {
+  const saveEdit = (menuId: number) => {
     const newName = draft.trim();
-    if (!newName || (newName !== oldName && menu[newName])) return;
-    if (newName !== oldName) {
-      setMenu((current) => {
-        const updated: MenuData = {};
-        Object.entries(current).forEach(([name, items]) => {
-          updated[name === oldName ? newName : name] = items;
-        });
-        return updated;
-      });
-    }
+    if (
+      !newName ||
+      menus.some((menu) => menu.id !== menuId && menu.menu === newName)
+    )
+      return;
+    dispatch(renameMenu({ id: menuId, name: newName }));
     setEditing(null);
   };
 
@@ -169,10 +65,12 @@ export default function Menu() {
         </button>
       </header>
 
+      {menusLoading && <p role="status">Loading menus...</p>}
+      {menuError && <p role="alert">{menuError}</p>}
       <div style={{ display: "grid", gap: 16 }}>
-        {Object.entries(menu).map(([category, items]) => (
+        {menus.map((category) => (
           <section
-            key={category}
+            key={category.id}
             style={{
               border: "1px solid #e5e7eb",
               borderRadius: 10,
@@ -191,11 +89,11 @@ export default function Menu() {
                 borderBottom: "1px solid #e5e7eb",
               }}
             >
-              {editing === category ? (
+              {editing === category.id ? (
                 <form
                   onSubmit={(event) => {
                     event.preventDefault();
-                    saveEdit(category);
+                    saveEdit(category.id);
                   }}
                   style={{ display: "flex", gap: 8 }}
                 >
@@ -217,9 +115,9 @@ export default function Menu() {
                   </button>
                 </form>
               ) : (
-                <h2 style={{ fontSize: 18, margin: 0 }}>{category}</h2>
+                <h2 style={{ fontSize: 18, margin: 0 }}>{category.menu}</h2>
               )}
-              {editing !== category && (
+              {editing !== category.id && (
                 <button
                   type="button"
                   onClick={() => startEdit(category)}
@@ -229,8 +127,8 @@ export default function Menu() {
                 </button>
               )}
             </div>
-            {items.length ? (
-              items.map((item) => (
+            {category.submenu.length ? (
+              category.submenu.map((item) => (
                 <article
                   key={item.id}
                   style={{
@@ -244,7 +142,7 @@ export default function Menu() {
                 >
                   <div>
                     <h3 style={{ fontSize: 15, margin: "0 0 4px" }}>
-                      {item.name}
+                      {item.submenu}
                     </h3>
                     <p style={{ color: "#6b7280", fontSize: 14, margin: 0 }}>
                       {item.description}
@@ -275,7 +173,13 @@ export default function Menu() {
             aria-labelledby="add-menu-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <AddMenu onClose={() => setIsAddingMenu(false)} />
+            <AddMenu
+              onClose={() => setIsAddingMenu(false)}
+              onCreate={async (menu) => {
+                await dispatch(addMenu(menu));
+                setIsAddingMenu(false);
+              }}
+            />
           </div>
         </div>
       )}
