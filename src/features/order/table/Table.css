@@ -1,0 +1,132 @@
+.active-table {
+  display: flex;
+  min-height: 76px;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 1px solid #dce4e0;
+  border-left: 4px solid #17805f;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(25 50 40 / 5%);
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.active-table:hover {
+  border-color: #b8c9c1;
+  border-left-color: #17805f;
+  box-shadow: 0 4px 14px rgb(25 50 40 / 9%);
+}
+
+.active-table--occupied {
+  border-left-color: #c47a24;
+}
+
+.active-table--occupied:hover {
+  border-left-color: #c47a24;
+}
+
+.active-table > div:first-child {
+  min-width: 0;
+}
+
+.active-table h3 {
+  margin: 0 0 8px;
+  color: #202c29;
+  font-size: 18px;
+}
+
+.active-table span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #167253;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.active-table span::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.active-table--occupied span {
+  color: #a65d12;
+}
+
+.active-table button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #167253;
+  border-radius: 6px;
+  background: #167253;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+.active-table button:hover {
+  border-color: #105c42;
+  background: #105c42;
+}
+
+.active-table button:focus-visible {
+  outline: 3px solid #96cdb8;
+  outline-offset: 2px;
+}
+
+.active-table__actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.active-table > button {
+  margin-left: auto;
+}
+
+.active-table__actions button:last-child {
+  border-color: #cbd5d1;
+  background: #fff;
+  color: #35443e;
+}
+
+.active-table__actions button:last-child:hover {
+  background: #f2f5f3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .active-table,
+  .active-table button {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .active-table {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .active-table__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .active-table button {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+}

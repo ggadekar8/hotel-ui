@@ -1,0 +1,66 @@
+.view-order__header {
+  padding-right: 36px;
+  border-bottom: 1px solid #e4eae7;
+}
+
+.view-order__header h2 {
+  margin: 0;
+  color: #202c29;
+  font-size: 24px;
+}
+
+.view-order__header p {
+  margin: 8px 0 18px;
+  color: #64736d;
+}
+
+.view-order__customer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e4eae7;
+}
+
+.view-order__customer p {
+  margin: 0;
+  color: #46554f;
+  line-height: 1.6;
+}
+
+.view-order__customer a {
+  color: #167253;
+}
+
+.view-order__items-wrap {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.view-order__items {
+  width: 100%;
+  border-collapse: collapse;
+  color: #35443e;
+  text-align: left;
+}
+
+.view-order__items th,
+.view-order__items td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e8eeeb;
+  white-space: nowrap;
+}
+
+.view-order__items thead th {
+  background: #f5f8f6;
+  color: #586761;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.view-order__items tfoot th {
+  border-bottom: 0;
+  color: #202c29;
+  font-size: 16px;
+}

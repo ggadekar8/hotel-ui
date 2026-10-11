@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
 
           <nav aria-label="Main navigation" style={styles.nav}>
             <NavLink
-              to="/"
+              to="/home"
               style={({ isActive }) => ({
                 ...styles.navLink,
                 fontWeight: isActive ? 700 : 400,
@@ -50,10 +50,26 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
                 >
                   Contact
                 </NavLink>
-                <a href="#">Logout</a>
+                <NavLink
+                  to="/login"
+                  style={({ isActive }) => ({
+                    ...styles.navLink,
+                    fontWeight: isActive ? 700 : 400,
+                  })}
+                >
+                  Logout
+                </NavLink>
               </div>
             </div>
-
+            <NavLink
+              to="/cart"
+              style={({ isActive }) => ({
+                ...styles.navLink,
+                fontWeight: isActive ? 700 : 400,
+              })}
+            >
+              Cart
+            </NavLink>
             <div className="dropdown">
               <button className="dropbtn">External Reports ▼</button>
               <div className="dropdown-content">
