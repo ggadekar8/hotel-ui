@@ -1,0 +1,46 @@
+.admin-table-row__status {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #e8f4ee;
+  color: #176548;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-table-row--occupied .admin-table-row__status {
+  background: #fff2df;
+  color: #995c14;
+}
+
+.admin-table-row--reserved .admin-table-row__status {
+  background: #eaf0f8;
+  color: #3e5c7b;
+}
+
+.admin-table-row__actions {
+  display: flex;
+  gap: 7px;
+}
+
+.admin-table-row__actions button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #cbd8d1;
+  border-radius: 5px;
+  background: #fff;
+  color: #35443e;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-table-row__actions button:hover {
+  background: #edf4f0;
+}
+
+.admin-table-row__actions button:focus-visible {
+  outline: 3px solid #a7d4bf;
+  outline-offset: 2px;
+}

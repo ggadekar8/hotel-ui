@@ -1,5 +1,7 @@
 import { useState } from "react";
-import Table, { type TableProps } from "../table/Table";
+import type { TableProps } from "../table/Table";
+import Counter from "../counter/Counter";
+import TableManagement from "../table/table-management/TableManagement";
 import Waiter, { type WaiterData } from "../waiter/Waiter";
 import AddWaiter from "../waiter/add-waiter/AddWaiter";
 import UpdateWaiter from "../waiter/update-waiter/UpdateWaiter";
@@ -132,32 +134,10 @@ export default function MyAccount() {
               ))}
             </ul>
           </section>
+        ) : activeTab === "Counter" ? (
+          <Counter />
         ) : activeTab === "Table" ? (
-          <section aria-labelledby="table-heading">
-            <h2 id="table-heading">Table list</h2>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr>
-                    <th scope="col" style={tableHeaderStyle}>
-                      Table ID
-                    </th>
-                    <th scope="col" style={tableHeaderStyle}>
-                      Chairs
-                    </th>
-                    <th scope="col" style={tableHeaderStyle}>
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dummyTables.map((table) => (
-                    <Table key={table.id} {...table} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <TableManagement />
         ) : (
           <section aria-labelledby="tab-heading">
             <h2 id="tab-heading">{activeTab}</h2>
@@ -255,10 +235,3 @@ export default function MyAccount() {
     </div>
   );
 }
-
-const tableHeaderStyle: React.CSSProperties = {
-  padding: "12px 10px",
-  borderBottom: "1px solid #dfe6e2",
-  color: "#46554f",
-  textAlign: "left",
-};
