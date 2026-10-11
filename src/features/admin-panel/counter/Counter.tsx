@@ -1,4 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppDispatch } from "../../../shared/hooks/useAppDispatch";
+import { useAppSelector } from "../../../shared/hooks/useAppSelector";
+import { fetchCounters } from "../../../store/counter/counterThunk";
+import {
+  addCounterToState,
+  removeCounter,
+  updateCounter as updateCounterInState,
+} from "../../../store/counter/counterSlice";
 import AddCounter from "./add-counter/AddCounter";
 import UpdateCounter from "./update-counter/UpdateCounter";
 import "./Counter.css";
@@ -9,21 +17,22 @@ export interface CounterData {
   id: string | number;
   name: string;
   code: string;
-  status: CounterStatus;
+  status: string;
 }
 
-const initialCounters: CounterData[] = [
-  { id: 1, name: "Jordan Ellis", code: "C001", status: "On duty" },
-  { id: 2, name: "Taylor Reed", code: "C002", status: "Available" },
-  { id: 3, name: "Casey Brooks", code: "C003", status: "Off duty" },
-];
-
 export default function Counter() {
-  const [counters, setCounters] = useState(initialCounters);
+  const dispatch = useAppDispatch();
+  const { counters, isLoading, error } = useAppSelector(
+    (state) => state.counter,
+  );
   const [editingCounter, setEditingCounter] = useState<CounterData | null>(
     null,
   );
   const [isAddingCounter, setIsAddingCounter] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchCounters());
+  }, [dispatch]);
 
   function closeForm() {
     setIsAddingCounter(false);
@@ -48,6 +57,10 @@ export default function Counter() {
         </button>
       </header>
 
+      {isLoading && counters.length === 0 && (
+        <p role="status">Loading counters...</p>
+      )}
+      {error && <p role="alert">{error}</p>}
       {counters.length > 0 ? (
         <ul className="counter-management__list">
           {counters.map((counter) => (
@@ -76,17 +89,18 @@ export default function Counter() {
               <div className="counter-card__actions">
                 <button
                   type="button"
-                  onClick={() => setEditingCounter(counter)}
+                  onClick={() =>
+                    setEditingCounter({
+                      ...counter,
+                      status: counter.status as CounterStatus,
+                    })
+                  }
                 >
                   Edit
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
-                    setCounters((current) =>
-                      current.filter((item) => item.id !== counter.id),
-                    )
-                  }
+                  onClick={() => dispatch(removeCounter(counter.id))}
                 >
                   Delete
                 </button>
@@ -115,11 +129,7 @@ export default function Counter() {
                 counter={editingCounter}
                 onClose={closeForm}
                 onSave={(updated) => {
-                  setCounters((current) =>
-                    current.map((item) =>
-                      item.id === updated.id ? updated : item,
-                    ),
-                  );
+                  dispatch(updateCounterInState(updated));
                   closeForm();
                 }}
               />
@@ -127,7 +137,7 @@ export default function Counter() {
               <AddCounter
                 onClose={closeForm}
                 onSave={(counter) => {
-                  setCounters((current) => [...current, counter]);
+                  dispatch(addCounterToState(counter));
                   closeForm();
                 }}
               />

@@ -28,3 +28,11 @@ export interface SubMenu {
    numberOfChairs: number;
    status: string;
  }
+
+ export interface ICounter {
+   id: string | number;
+   name: string;
+   code: string;
+   status: string;
+ }
+ 
