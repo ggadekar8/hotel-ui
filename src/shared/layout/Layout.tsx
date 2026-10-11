@@ -82,7 +82,15 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
                 >
                   My Account
                 </NavLink>
-                <a href="#">Report2</a>
+                <NavLink
+                  to="/report"
+                  style={({ isActive }) => ({
+                    ...styles.navLink,
+                    fontWeight: isActive ? 700 : 400,
+                  })}
+                >
+                  Report
+                </NavLink>
                 <a href="#">Report3</a>
               </div>
             </div>

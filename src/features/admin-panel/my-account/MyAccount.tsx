@@ -1,14 +1,15 @@
 import { useState } from "react";
 import type { TableProps } from "../table/Table";
 import Counter from "../counter/Counter";
+import Menu from "../menu/Menu";
 import TableManagement from "../table/table-management/TableManagement";
 import Waiter, { type WaiterData } from "../waiter/Waiter";
 import AddWaiter from "../waiter/add-waiter/AddWaiter";
 import UpdateWaiter from "../waiter/update-waiter/UpdateWaiter";
 
-type Tab = "Waiter" | "Counter" | "Table";
+type Tab = "Waiter" | "Counter" | "Table" | "Menu";
 
-const tabs: Tab[] = ["Waiter", "Counter", "Table"];
+const tabs: Tab[] = ["Waiter", "Counter", "Table", "Menu"];
 const dummyTables: TableProps[] = [
   { id: 1, numberOfChairs: 2, status: "Available" },
   { id: 2, numberOfChairs: 4, status: "Occupied" },
@@ -138,6 +139,8 @@ export default function MyAccount() {
           <Counter />
         ) : activeTab === "Table" ? (
           <TableManagement />
+        ) : activeTab === "Menu" ? (
+          <Menu />
         ) : (
           <section aria-labelledby="tab-heading">
             <h2 id="tab-heading">{activeTab}</h2>

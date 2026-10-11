@@ -1,0 +1,32 @@
+.menu-management__backdrop {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(20 34 28 / 56%);
+  backdrop-filter: blur(3px);
+}
+
+.menu-management__dialog {
+  width: min(100%, 860px);
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid #dce5df;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgb(10 27 19 / 28%);
+}
+
+.menu-management button:focus-visible,
+.menu-management__dialog button:focus-visible {
+  outline: 3px solid #a7d4bf;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .menu-management__dialog {
+    max-height: 94vh;
+  }
+}
