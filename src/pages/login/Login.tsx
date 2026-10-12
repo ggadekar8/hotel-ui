@@ -1,14 +1,17 @@
 import { useEffect, useState, type FormEvent, type CSSProperties } from "react";
 import { useAppDispatch } from "../../shared/hooks/useAppDispatch";
 import { useAppSelector } from "../../shared/hooks/useAppSelector";
-import { loginUser } from "../../store/users/userThunks";
-import { useNavigate } from "react-router-dom";
-import { getRoleHomePath } from "../../common/model/users/roles";
+import { loginCustomerWithOtp, loginUser } from "../../store/users/userThunks";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getRoleHomePath, LoginRole } from "../../common/model/users/roles";
+import { sendCustomerOtp } from "../../services/customer-auth.service";
 type LoginRole = "Customer" | "Staff";
 
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const tableId = searchParams.get("tableid")?.trim() || undefined;
   const activeUser = useAppSelector((state) => state.users.activeUser);
   const [role, setRole] = useState<LoginRole>("Customer");
   const [otpSent, setOtpSent] = useState(false);
@@ -16,13 +19,49 @@ export default function Login() {
 
   useEffect(() => {
     if (activeUser) {
-      navigate(getRoleHomePath(activeUser.roleId), { replace: true });
+      const destination = getRoleHomePath(activeUser.roleId);
+      navigate(
+        tableId && activeUser.roleId === LoginRole.Customer
+          ? `${destination}?tableid=${encodeURIComponent(tableId)}`
+          : destination,
+        { replace: true },
+      );
     }
-  }, [activeUser, navigate]);
+  }, [activeUser, navigate, tableId]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+
+    if (role === "Customer") {
+      const name = String(formData.get("name") ?? "").trim();
+      const phone = String(formData.get("phone") ?? "").trim();
+
+      try {
+        if (!otpSent) {
+          await sendCustomerOtp({ name, phone, tableId });
+          setOtpSent(true);
+          setLoginError(null);
+          return;
+        }
+
+        const otp = String(formData.get("otp") ?? "").trim();
+        await dispatch(
+          loginCustomerWithOtp({ name, phone, otp, tableId }),
+        ).unwrap();
+        setLoginError(null);
+      } catch (error) {
+        setLoginError(
+          typeof error === "string"
+            ? error
+            : otpSent
+              ? "OTP verification failed. Please try again."
+              : "Unable to send OTP. Please try again.",
+        );
+      }
+      return;
+    }
+
     const userName = String(formData.get("username") ?? "");
     const password = String(formData.get("password") ?? "");
 
@@ -45,44 +84,61 @@ export default function Login() {
         <h1 style={styles.heading}>Welcome back</h1>
         <p style={styles.subtitle}>Sign in to continue</p>
 
-        <fieldset style={styles.roles}>
-          <legend style={styles.legend}>Login as</legend>
-          {(["Customer", "Staff"] as LoginRole[]).map((item) => (
-            <label
-              key={item}
-              style={{
-                ...styles.role,
-                ...(role === item ? styles.activeRole : {}),
-              }}
-            >
-              <input
-                type="radio"
-                name="role"
-                value={item}
-                checked={role === item}
-                onChange={() => {
-                  setRole(item);
-                  setOtpSent(false);
-                  setLoginError(null);
+        {!tableId && (
+          <fieldset style={styles.roles}>
+            <legend style={styles.legend}>Login as</legend>
+            {(["Customer", "Staff"] as LoginRole[]).map((item) => (
+              <label
+                key={item}
+                style={{
+                  ...styles.role,
+                  ...(role === item ? styles.activeRole : {}),
                 }}
-              />
-              {item}
-            </label>
-          ))}
-        </fieldset>
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value={item}
+                  checked={role === item}
+                  onChange={() => {
+                    setRole(item);
+                    setOtpSent(false);
+                    setLoginError(null);
+                  }}
+                />
+                {item}
+              </label>
+            ))}
+          </fieldset>
+        )}
 
         <form onSubmit={submit} style={styles.form}>
           {role === "Customer" ? (
             <>
-              <label htmlFor="mobile" style={styles.label}>
-                Mobile number
+              <label htmlFor="name" style={styles.label}>
+                Name
               </label>
               <input
-                id="mobile"
-                name="mobile"
+                id="name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                placeholder="Enter your name"
+                required
+                style={styles.input}
+              />
+              <label htmlFor="phone" style={styles.label}>
+                Phone number
+              </label>
+              <input
+                id="phone"
+                name="phone"
                 type="tel"
                 autoComplete="tel"
-                placeholder="Enter mobile number"
+                inputMode="tel"
+                placeholder="Enter phone number"
+                pattern="\+?[0-9]{7,15}"
+                title="Enter 7 to 15 digits, optionally starting with +"
                 required
                 style={styles.input}
               />
@@ -103,8 +159,9 @@ export default function Login() {
                   />
                 </>
               )}
+              {loginError && <p role="alert">{loginError}</p>}
               <button type="submit" style={styles.button}>
-                {otpSent ? "Login" : "Send OTP"}
+                {otpSent ? "Verify OTP" : "Send OTP"}
               </button>
             </>
           ) : (

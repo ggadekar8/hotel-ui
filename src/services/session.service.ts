@@ -1,6 +1,10 @@
-import type { IUser } from "../common/model/users/types";
-
-export type ActiveUser = Omit<IUser, "password">;
+export interface ActiveUser {
+  id: number | string;
+  name: string;
+  email?: string;
+  phone?: string;
+  roleId: number;
+}
 
 const ACTIVE_USER_KEY = "activeUser";
 
@@ -16,18 +20,26 @@ export const readActiveUserSession = (): ActiveUser | null => {
       typeof parsed === "object" &&
       parsed !== null &&
       "id" in parsed &&
-      typeof parsed.id === "number" &&
+      (typeof parsed.id === "number" || typeof parsed.id === "string") &&
       "name" in parsed &&
       typeof parsed.name === "string" &&
-      "email" in parsed &&
-      typeof parsed.email === "string" &&
       "roleId" in parsed &&
-      typeof parsed.roleId === "number"
+      typeof parsed.roleId === "number" &&
+      (!("email" in parsed) || typeof parsed.email === "string") &&
+      (!("phone" in parsed) || typeof parsed.phone === "string")
     ) {
+      const email = "email" in parsed && typeof parsed.email === "string"
+        ? parsed.email
+        : undefined;
+      const phone = "phone" in parsed && typeof parsed.phone === "string"
+        ? parsed.phone
+        : undefined;
+
       return {
         id: parsed.id,
         name: parsed.name,
-        email: parsed.email,
+        ...(email ? { email } : {}),
+        ...(phone ? { phone } : {}),
         roleId: parsed.roleId,
       };
     }

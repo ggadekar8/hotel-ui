@@ -48,3 +48,11 @@ export interface SubMenu {
    status: string;
  }
  
+
+ export interface  ICustomerUser {
+  id: number;
+  name: string;
+  phone: string;
+  password:string;
+  roleId:number
+}

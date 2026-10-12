@@ -8,6 +8,7 @@ import {
   fetchMenus,
   fetchUsers,
   loginUser,
+  loginCustomerWithOtp,
   logoutUser,
 } from "./userThunks";
 
@@ -92,6 +93,9 @@ const userSlice = createSlice({
         state.menus = [...state.menus, action.payload];
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        state.activeUser = action.payload;
+      })
+      .addCase(loginCustomerWithOtp.fulfilled, (state, action) => {
         state.activeUser = action.payload;
       })
       .addCase(logoutUser.fulfilled, (state) => {

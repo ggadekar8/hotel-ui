@@ -3,7 +3,9 @@ import { createAsyncThunk } from
 
 import { getUsers, createUser, getMenus, createMenu, login } from "../../services/user.service";
 import { saveActiveUserSession, clearActiveUserSession, type ActiveUser } from "../../services/session.service";
+import { verifyCustomerOtp } from "../../services/customer-auth.service";
 import type { Menu } from "../../common/model/users/types";
+import { LoginRole } from "../../common/model/users/roles";
 
 export const fetchUsers =
   createAsyncThunk(
@@ -59,3 +61,27 @@ export const loginUser = createAsyncThunk<
 export const logoutUser = createAsyncThunk("users/logout", async () => {
   clearActiveUserSession();
 });
+
+export const loginCustomerWithOtp = createAsyncThunk<
+  ActiveUser,
+  { name: string; phone: string; otp: string; tableId?: string },
+  { rejectValue: string }
+>(
+  "users/loginCustomerWithOtp",
+  async (request, { rejectWithValue }) => {
+    try {
+      const customer = await verifyCustomerOtp(request);
+      const activeUser: ActiveUser = {
+        id: customer.id,
+        name: customer.name,
+        phone: customer.phone,
+        ...(customer.phone ? { email: customer.phone } : {}),
+        roleId: LoginRole.Customer,
+      };
+      saveActiveUserSession(activeUser);
+      return activeUser;
+    } catch {
+      return rejectWithValue("OTP verification failed. Check the code and try again.");
+    }
+  },
+);
