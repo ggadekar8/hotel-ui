@@ -1,0 +1,17 @@
+[ {
+    "id": 1,
+    "role": "Admin" 
+},
+{
+    "id": 2,
+    "role": "Counter" 
+},
+{
+    "id": 3,
+    "role": "Waiter" 
+},
+{
+    "id": 4,
+    "role": "Customer" 
+} 
+] 

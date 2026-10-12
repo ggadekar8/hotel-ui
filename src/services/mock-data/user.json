@@ -1,0 +1,63 @@
+[
+	{
+		"id": 1,
+		"name": "Alex Johnson",
+		"email": "alex.johnson@example.com",
+		"password":"111",
+		"roleId": 1
+	},
+	{
+		"id": 2,
+		"name": "Samantha Lee",
+		"email": "samantha.lee@example.com","password":"111",
+		"roleId": 2
+	},
+	{
+		"id": 3,
+		"name": "Michael Chen",
+		"email": "michael.chen@example.com","password":"111",
+		"roleId": 3
+	},
+	{
+		"id": 4,
+		"name": "Emily Davis",
+		"email": "emily.davis@example.com","password":"111",
+		"roleId": 4
+	},
+	{
+		"id": 5,
+		"name": "Daniel Wilson",
+		"email": "daniel.wilson@example.com","password":"111",
+		"roleId": 1
+	},
+	{
+		"id": 6,
+		"name": "Olivia Martinez",
+		"email": "olivia.martinez@example.com","password":"111",
+		 "roleId": 2
+	},
+	{
+		"id": 7,
+		"name": "James Brown",
+		 "email": "james.brown@exaample.com","password":"111",
+		 "roleId": 3
+	},
+	{
+		"id": 8,
+		"name": "Sophia Garcia",
+		 "email": "sophia.garcia@exaample.com","password":"111",
+		 "roleId": 4			
+	},
+	{
+		"id": 9,
+		"name": "Benjamin Taylor",
+		"email": "benjamin.taylor@example.com","password":"111" ,
+		 "roleId": 4			
+	},
+	{
+		"id": 10,
+		"name": "Isabella Anderson",
+		"email": "isabella.anderson@example.com","password":"111" ,
+		 "roleId": 4			
+	}
+]

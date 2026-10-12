@@ -1,0 +1,101 @@
+.table-form {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  color: #202c29;
+}
+
+.table-form__header,
+.table-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.table-form__header {
+  margin-bottom: 4px;
+}
+
+.table-form__header p {
+  margin: 0 0 5px;
+  color: #167253;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.table-form__header h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.table-form__header > button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dce5df;
+  border-radius: 6px;
+  background: #fff;
+  color: #35443e;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.table-form__field {
+  display: grid;
+  gap: 7px;
+  color: #46554f;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.table-form__field input,
+.table-form__field select {
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 0 11px;
+  border: 1px solid #cbd8d1;
+  border-radius: 6px;
+  background: #fff;
+  color: #202c29;
+  font: inherit;
+}
+
+.table-form__footer {
+  justify-content: flex-end;
+  margin-top: 5px;
+  padding-top: 16px;
+  border-top: 1px solid #e5ebe7;
+}
+
+.table-form__footer button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #cbd8d1;
+  border-radius: 6px;
+  background: #fff;
+  color: #35443e;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.table-form__footer button:last-child {
+  border-color: #176548;
+  background: #176548;
+  color: #fff;
+}
+
+.table-form button:focus-visible,
+.table-form input:focus-visible,
+.table-form select:focus-visible {
+  outline: 3px solid #a7d4bf;
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .table-form {
+    padding: 20px 16px;
+  }
+}

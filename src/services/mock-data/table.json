@@ -1,0 +1,6 @@
+[
+  { "id": 1, "numberOfChairs": 2, "status": "Available" },
+  { "id": 2, "numberOfChairs": 4, "status": "Occupied" },
+  { "id": 3, "numberOfChairs": 6, "status": "Reserved" },
+  { "id": 4, "numberOfChairs": 4, "status": "Available" }
+]

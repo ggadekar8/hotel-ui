@@ -1,0 +1,249 @@
+.update-waiter-backdrop {
+  position: fixed;
+  z-index: 1100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(20 34 28 / 56%);
+  backdrop-filter: blur(3px);
+}
+
+.update-waiter-dialog {
+  width: min(100%, 560px);
+  max-height: min(88vh, 760px);
+  overflow-y: auto;
+  border: 1px solid #dce5df;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgb(10 27 19 / 28%);
+  animation: update-waiter-enter 160ms ease-out;
+}
+
+.update-waiter {
+  padding: 26px;
+  color: #202c29;
+}
+
+.update-waiter__header,
+.update-waiter__section-heading,
+.update-waiter__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.update-waiter__header {
+  margin-bottom: 22px;
+}
+
+.update-waiter__eyebrow {
+  margin: 0 0 5px;
+  color: #167253;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.update-waiter__header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.update-waiter__close {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border: 1px solid #dce5df;
+  border-radius: 6px;
+  background: #fff;
+  color: #35443e;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.update-waiter__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #46554f;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.update-waiter__field input {
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: 1px solid #cbd8d1;
+  border-radius: 6px;
+  background: #fff;
+  color: #202c29;
+  font: inherit;
+}
+
+.update-waiter__field input:focus-visible {
+  outline: 3px solid #b5ddc8;
+  outline-offset: 1px;
+}
+
+.update-waiter__tables {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5ebe7;
+}
+
+.update-waiter__section-heading {
+  margin-bottom: 14px;
+}
+
+.update-waiter__section-heading h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.update-waiter__section-heading p {
+  margin: 5px 0 0;
+  color: #6c7a74;
+  font-size: 13px;
+}
+
+.update-waiter__count {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f4ee;
+  color: #176548;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.update-waiter__table-list {
+  display: grid;
+  gap: 7px;
+  max-height: 180px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.update-waiter__table-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e3eae6;
+  border-radius: 6px;
+  background: #f8faf9;
+  font-size: 14px;
+}
+
+.update-waiter__table-list button {
+  border: 0;
+  background: transparent;
+  color: #a64032;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.update-waiter__empty {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed #cedad3;
+  border-radius: 6px;
+  color: #6c7a74;
+  font-size: 13px;
+  text-align: center;
+}
+
+.update-waiter__add-table {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.update-waiter__add-button,
+.update-waiter__cancel,
+.update-waiter__save {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #cbd8d1;
+  border-radius: 6px;
+  background: #fff;
+  color: #35443e;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.update-waiter__add-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.update-waiter__footer {
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e5ebe7;
+}
+
+.update-waiter__save {
+  border-color: #176548;
+  background: #176548;
+  color: #fff;
+}
+
+.update-waiter__save:hover,
+.update-waiter__add-button:hover:not(:disabled),
+.update-waiter__cancel:hover {
+  background: #edf4f0;
+}
+
+.update-waiter__save:hover {
+  background: #11543b;
+}
+
+.update-waiter button:focus-visible {
+  outline: 3px solid #a7d4bf;
+  outline-offset: 2px;
+}
+
+@keyframes update-waiter-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 520px) {
+  .update-waiter-backdrop {
+    padding: 10px;
+  }
+
+  .update-waiter {
+    padding: 20px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .update-waiter-dialog {
+    animation: none;
+  }
+}

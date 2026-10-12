@@ -1,0 +1,5 @@
+ [
+  { "id": 1, "name": "Jordan Ellis", "code": "C001", "status": "On duty" },
+  { "id": 2, "name": "Taylor Reed", "code": "C002", "status": "Available" },
+  { "id": 3, "name": "Casey Brooks", "code": "C003", "status": "Off duty" }
+]
