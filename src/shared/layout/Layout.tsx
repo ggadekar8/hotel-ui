@@ -29,15 +29,17 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
           </div>
 
           <nav aria-label="Main navigation" style={styles.nav}>
-            <NavLink
-              to="/home"
-              style={({ isActive }) => ({
-                ...styles.navLink,
-                fontWeight: isActive ? 700 : 400,
-              })}
-            >
-              Home
-            </NavLink>
+            {activeUser && (
+              <NavLink
+                to="/home"
+                style={({ isActive }) => ({
+                  ...styles.navLink,
+                  fontWeight: isActive ? 700 : 400,
+                })}
+              >
+                Home
+              </NavLink>
+            )}
             {activeUser && activeUser.roleId === LoginRole.Customer && (
               <>
                 <NavLink
