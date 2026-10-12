@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../hooks/useAppDispatch";
 import { useAppSelector } from "../hooks/useAppSelector";
 import { logoutUser } from "../../store/users/userThunks";
-import { LoginRole } from "../../common/model/users/roles";
+import { getRoleName, LoginRole } from "../../common/model/users/roles";
 type LayoutProps = {
   children?: React.ReactNode;
   title?: string;
@@ -29,17 +29,17 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
           </div>
 
           <nav aria-label="Main navigation" style={styles.nav}>
+            <NavLink
+              to="/home"
+              style={({ isActive }) => ({
+                ...styles.navLink,
+                fontWeight: isActive ? 700 : 400,
+              })}
+            >
+              Home
+            </NavLink>
             {activeUser && activeUser.roleId === LoginRole.Customer && (
               <>
-                <NavLink
-                  to="/home"
-                  style={({ isActive }) => ({
-                    ...styles.navLink,
-                    fontWeight: isActive ? 700 : 400,
-                  })}
-                >
-                  Home
-                </NavLink>
                 <NavLink
                   to="/about"
                   style={({ isActive }) => ({
@@ -69,17 +69,19 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
                 </NavLink>
               </>
             )}
-            {activeUser && activeUser.roleId === LoginRole.Counter && (
-              <NavLink
-                to="/active-tables"
-                style={({ isActive }) => ({
-                  ...styles.navLink,
-                  fontWeight: isActive ? 700 : 400,
-                })}
-              >
-                Active Tables
-              </NavLink>
-            )}
+            {activeUser &&
+              (activeUser.roleId === LoginRole.Counter ||
+                activeUser.roleId === LoginRole.Admin) && (
+                <NavLink
+                  to="/active-tables"
+                  style={({ isActive }) => ({
+                    ...styles.navLink,
+                    fontWeight: isActive ? 700 : 400,
+                  })}
+                >
+                  Active Tables
+                </NavLink>
+              )}
 
             {activeUser && activeUser.roleId === LoginRole.Waiter && (
               <NavLink
@@ -134,7 +136,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
                   cursor: "pointer",
                 }}
               >
-                Logout ({activeUser.name})
+                Logout ({activeUser.name} - {getRoleName(activeUser.roleId)})
               </button>
             )}
           </nav>

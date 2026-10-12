@@ -12,6 +12,7 @@ import MyAccount from "../../features/admin-panel/my-account/MyAccount";
 import Report from "../../features/report/Report";
 import WaiterAssignTables from "../../features/waiter/WaiterAssignTables";
 import { useAppSelector } from "../hooks/useAppSelector";
+import { getRoleHomePath } from "../../common/model/users/roles";
 
 export const AppRoutes = () => {
   const activeUser = useAppSelector((state) => state.users.activeUser);
@@ -23,10 +24,7 @@ export const AppRoutes = () => {
             path="/"
             element={
               activeUser ? (
-                <Navigate
-                  to={activeUser.roleId === 1 ? "/home" : "/active-tables"}
-                  replace
-                />
+                <Navigate to={getRoleHomePath(activeUser.roleId)} replace />
               ) : (
                 <Login />
               )

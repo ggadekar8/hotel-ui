@@ -1,15 +1,24 @@
-import { useState, type FormEvent, type CSSProperties } from "react";
+import { useEffect, useState, type FormEvent, type CSSProperties } from "react";
 import { useAppDispatch } from "../../shared/hooks/useAppDispatch";
+import { useAppSelector } from "../../shared/hooks/useAppSelector";
 import { loginUser } from "../../store/users/userThunks";
 import { useNavigate } from "react-router-dom";
+import { getRoleHomePath } from "../../common/model/users/roles";
 type LoginRole = "Customer" | "Staff";
 
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const activeUser = useAppSelector((state) => state.users.activeUser);
   const [role, setRole] = useState<LoginRole>("Customer");
   const [otpSent, setOtpSent] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeUser) {
+      navigate(getRoleHomePath(activeUser.roleId), { replace: true });
+    }
+  }, [activeUser, navigate]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,7 +29,6 @@ export default function Login() {
     try {
       await dispatch(loginUser({ userName, password })).unwrap();
       setLoginError(null);
-      navigate("/active-tables");
     } catch (error) {
       setLoginError(
         typeof error === "string"
