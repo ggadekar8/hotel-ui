@@ -7,12 +7,16 @@ import {
   addMenu,
   fetchMenus,
   fetchUsers,
+  loginUser,
+  logoutUser,
 } from "./userThunks";
 
-import type { Menu, User } from "../../common/model/users/types";
+import type { Menu, IUser } from "../../common/model/users/types";
+import { readActiveUserSession, type ActiveUser } from "../../services/session.service";
 
 interface UserState {
-  data: User[];
+  data: IUser[];
+  activeUser: ActiveUser | null;
   menus: Menu[];
   loading: boolean;
   menusLoading: boolean;
@@ -22,6 +26,7 @@ interface UserState {
 
 const initialState: UserState = {
   data: [],
+  activeUser: readActiveUserSession(),
   menus: [],
   loading: false,
   menusLoading: false,
@@ -85,6 +90,12 @@ const userSlice = createSlice({
       })
       .addCase(addMenu.fulfilled, (state, action) => {
         state.menus = [...state.menus, action.payload];
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.activeUser = action.payload;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.activeUser = null;
       });
   },
 });

@@ -1,12 +1,21 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "./layout.css";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../hooks/useAppDispatch";
+import { useAppSelector } from "../hooks/useAppSelector";
+import { logoutUser } from "../../store/users/userThunks";
+import { LoginRole } from "../../common/model/users/roles";
 type LayoutProps = {
   children?: React.ReactNode;
   title?: string;
 };
 
 const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const activeUser = useAppSelector((state) => state.users.activeUser);
+
   return (
     <div style={styles.page}>
       <header style={styles.header}>
@@ -20,18 +29,17 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
           </div>
 
           <nav aria-label="Main navigation" style={styles.nav}>
-            <NavLink
-              to="/home"
-              style={({ isActive }) => ({
-                ...styles.navLink,
-                fontWeight: isActive ? 700 : 400,
-              })}
-            >
-              Home
-            </NavLink>
-            <div className="dropdown">
-              <button className="dropbtn">Reconciliation ▼</button>
-              <div className="dropdown-content">
+            {activeUser && activeUser.roleId === LoginRole.Customer && (
+              <>
+                <NavLink
+                  to="/home"
+                  style={({ isActive }) => ({
+                    ...styles.navLink,
+                    fontWeight: isActive ? 700 : 400,
+                  })}
+                >
+                  Home
+                </NavLink>
                 <NavLink
                   to="/about"
                   style={({ isActive }) => ({
@@ -51,49 +59,84 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "MAT Loan" }) => {
                   Contact
                 </NavLink>
                 <NavLink
-                  to="/login"
+                  to="/cart"
                   style={({ isActive }) => ({
                     ...styles.navLink,
                     fontWeight: isActive ? 700 : 400,
                   })}
                 >
-                  Logout
+                  Cart
                 </NavLink>
+              </>
+            )}
+            {activeUser && activeUser.roleId === LoginRole.Counter && (
+              <NavLink
+                to="/active-tables"
+                style={({ isActive }) => ({
+                  ...styles.navLink,
+                  fontWeight: isActive ? 700 : 400,
+                })}
+              >
+                Active Tables
+              </NavLink>
+            )}
+
+            {activeUser && activeUser.roleId === LoginRole.Waiter && (
+              <NavLink
+                to="/waiter-assign-tables"
+                style={({ isActive }) => ({
+                  ...styles.navLink,
+                  fontWeight: isActive ? 700 : 400,
+                })}
+              >
+                Waiter Assign Tables
+              </NavLink>
+            )}
+            {activeUser && activeUser.roleId === LoginRole.Admin && (
+              <div className="dropdown">
+                <button className="dropbtn">Admin ▼</button>
+                <div className="dropdown-content">
+                  <NavLink
+                    to="/my-account"
+                    style={({ isActive }) => ({
+                      ...styles.navLink,
+                      fontWeight: isActive ? 700 : 400,
+                    })}
+                  >
+                    My Account
+                  </NavLink>
+                  <NavLink
+                    to="/report"
+                    style={({ isActive }) => ({
+                      ...styles.navLink,
+                      fontWeight: isActive ? 700 : 400,
+                    })}
+                  >
+                    Report
+                  </NavLink>
+                  <a href="#">Report3</a>
+                </div>
               </div>
-            </div>
-            <NavLink
-              to="/cart"
-              style={({ isActive }) => ({
-                ...styles.navLink,
-                fontWeight: isActive ? 700 : 400,
-              })}
-            >
-              Cart
-            </NavLink>{" "}
-            <div className="dropdown">
-              <button className="dropbtn">Admin ▼</button>
-              <div className="dropdown-content">
-                <NavLink
-                  to="/my-account"
-                  style={({ isActive }) => ({
-                    ...styles.navLink,
-                    fontWeight: isActive ? 700 : 400,
-                  })}
-                >
-                  My Account
-                </NavLink>
-                <NavLink
-                  to="/report"
-                  style={({ isActive }) => ({
-                    ...styles.navLink,
-                    fontWeight: isActive ? 700 : 400,
-                  })}
-                >
-                  Report
-                </NavLink>
-                <a href="#">Report3</a>
-              </div>
-            </div>
+            )}
+
+            {activeUser && (
+              <button
+                type="button"
+                onClick={() => {
+                  dispatch(logoutUser());
+                  navigate("/", { replace: true });
+                }}
+                style={{
+                  ...styles.navLink,
+                  background: "transparent",
+                  border: 0,
+                  padding: 0,
+                  cursor: "pointer",
+                }}
+              >
+                Logout ({activeUser.name})
+              </button>
+            )}
           </nav>
         </div>
       </header>

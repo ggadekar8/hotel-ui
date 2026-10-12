@@ -1,9 +1,15 @@
-export interface User {
+export interface IUser {
   id: number;
   name: string;
   email: string;
+  password:string;
+  roleId:number
 }
 
+export interface IRole {
+  id: number;
+  role: string;
+}
 export interface Menu {
   id: number;
   menu: string;

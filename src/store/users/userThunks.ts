@@ -1,7 +1,8 @@
 import { createAsyncThunk } from
 "@reduxjs/toolkit";
 
-import { getUsers, createUser, getMenus, createMenu } from "../../services/user.service";
+import { getUsers, createUser, getMenus, createMenu, login } from "../../services/user.service";
+import { saveActiveUserSession, clearActiveUserSession, type ActiveUser } from "../../services/session.service";
 import type { Menu } from "../../common/model/users/types";
 
 export const fetchUsers =
@@ -36,3 +37,25 @@ export const addMenu =
     "users/addMenu",
     async (menu: Menu) => createMenu(menu),
   );
+
+export const loginUser = createAsyncThunk<
+  ActiveUser,
+  { userName: string; password: string },
+  { rejectValue: string }
+>("users/login", async ({ userName, password }, { rejectWithValue }) => {
+  const user = await login(userName, password);
+  if (!user) return rejectWithValue("Invalid username or password");
+
+  const activeUser: ActiveUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    roleId: user.roleId,
+  };
+  saveActiveUserSession(activeUser);
+  return activeUser;
+});
+
+export const logoutUser = createAsyncThunk("users/logout", async () => {
+  clearActiveUserSession();
+});

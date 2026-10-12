@@ -1,8 +1,8 @@
-import type { User,Menu } from "../common/model/users/types";
+import type { IUser, Menu } from "../common/model/users/types";
 import users from "./mock-data/user.json";
 import menus from "./mock-data/menu.json";
 export const getUsers =
-  async (): Promise<User[]> => {
+  async (): Promise<IUser[]> => {
     return users;
     // const response =
     //   await axiosClient.get<User[]>(
@@ -34,12 +34,14 @@ export const getMenus =
 
 export const createUser =
   async (
-    user: Partial<User>
-  ): Promise<User> => {
+    user: Partial<IUser>
+  ): Promise<IUser> => {
     return {
       id: users.length + 1,
       name: user.name ?? "",
       email: user.email ?? "",
+      password: user.password ?? "111",
+      roleId: user.roleId ?? 1,
     };
     // const response =
     //   await axiosClient.post<User>(
@@ -51,3 +53,19 @@ export const createUser =
   };
 
 export const createMenu = async (menu: Menu): Promise<Menu> => menu;
+
+export const login = async (
+  userName: string,
+  password: string,
+): Promise<IUser | null> => {
+  const normalizedUserName = userName.trim().toLowerCase();
+
+  return (
+    users.find(
+      (user) =>
+        (user.name.toLowerCase() === normalizedUserName ||
+          user.email.toLowerCase() === normalizedUserName) &&
+        user.password === password,
+    ) ?? null
+  );
+};

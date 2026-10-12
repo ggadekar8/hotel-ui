@@ -1,21 +1,32 @@
 import { useState, type FormEvent, type CSSProperties } from "react";
-
-type LoginRole = "Customer" | "Admin" | "Counter" | "Waiter";
+import { useAppDispatch } from "../../shared/hooks/useAppDispatch";
+import { loginUser } from "../../store/users/userThunks";
+import { useNavigate } from "react-router-dom";
+type LoginRole = "Customer" | "Staff";
 
 export default function Login() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [role, setRole] = useState<LoginRole>("Customer");
   const [otpSent, setOtpSent] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // if (role === "Customer" && !otpSent) {
-    //   setOtpSent(true);
-    //   return;
-    // }
-    if (role === "Customer") {
-      window.location.href = "/home";
-    } else if (role === "Admin" || role === "Counter" || role === "Waiter") {
-      window.location.href = "/active-tables";
+    const formData = new FormData(event.currentTarget);
+    const userName = String(formData.get("username") ?? "");
+    const password = String(formData.get("password") ?? "");
+
+    try {
+      await dispatch(loginUser({ userName, password })).unwrap();
+      setLoginError(null);
+      navigate("/active-tables");
+    } catch (error) {
+      setLoginError(
+        typeof error === "string"
+          ? error
+          : "Unable to log in. Please try again.",
+      );
     }
   }
 
@@ -28,29 +39,28 @@ export default function Login() {
 
         <fieldset style={styles.roles}>
           <legend style={styles.legend}>Login as</legend>
-          {(["Customer", "Admin", "Counter", "Waiter"] as LoginRole[]).map(
-            (item) => (
-              <label
-                key={item}
-                style={{
-                  ...styles.role,
-                  ...(role === item ? styles.activeRole : {}),
+          {(["Customer", "Staff"] as LoginRole[]).map((item) => (
+            <label
+              key={item}
+              style={{
+                ...styles.role,
+                ...(role === item ? styles.activeRole : {}),
+              }}
+            >
+              <input
+                type="radio"
+                name="role"
+                value={item}
+                checked={role === item}
+                onChange={() => {
+                  setRole(item);
+                  setOtpSent(false);
+                  setLoginError(null);
                 }}
-              >
-                <input
-                  type="radio"
-                  name="role"
-                  value={item}
-                  checked={role === item}
-                  onChange={() => {
-                    setRole(item);
-                    setOtpSent(false);
-                  }}
-                />
-                {item}
-              </label>
-            ),
-          )}
+              />
+              {item}
+            </label>
+          ))}
         </fieldset>
 
         <form onSubmit={submit} style={styles.form}>
@@ -115,6 +125,7 @@ export default function Login() {
                 required
                 style={styles.input}
               />
+              {loginError && <p role="alert">{loginError}</p>}
               <button type="submit" style={styles.button}>
                 Login
               </button>
